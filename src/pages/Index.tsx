@@ -4,6 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+
+const ORDER_URL = 'https://functions.poehali.dev/28717117-c24e-43d4-98a3-1f5fd63dfa44';
 
 const HERO_IMG = 'https://cdn.poehali.dev/projects/a8ae6773-81f2-4c84-b16d-21ba235a7950/files/776fc0ab-d762-4719-ae50-67bcef584d0d.jpg';
 const WORKOUT_IMG = 'https://cdn.poehali.dev/projects/a8ae6773-81f2-4c84-b16d-21ba235a7950/files/4604e9cb-3e8c-45b3-ba17-42618dc30320.jpg';
@@ -40,6 +44,38 @@ const reviews = [
 
 function Index() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { toast } = useToast();
+  const [order, setOrder] = useState<{ product: string; price: string } | null>(null);
+  const [form, setForm] = useState({ name: '', contact: '', comment: '' });
+  const [sending, setSending] = useState(false);
+
+  const openOrder = (product: string, price: string) => {
+    setForm({ name: '', contact: '', comment: '' });
+    setOrder({ product, price });
+  };
+
+  const submitOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.contact.trim()) {
+      toast({ title: 'Заполните имя и контакт', variant: 'destructive' });
+      return;
+    }
+    setSending(true);
+    try {
+      const res = await fetch(ORDER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, product: order?.product, price: order?.price }),
+      });
+      if (!res.ok) throw new Error();
+      toast({ title: 'Заявка отправлена!', description: 'Я свяжусь с вами в ближайшее время.' });
+      setOrder(null);
+    } catch {
+      toast({ title: 'Не удалось отправить', description: 'Попробуйте ещё раз позже.', variant: 'destructive' });
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -130,7 +166,7 @@ function Index() {
               </div>
               <div className="flex items-center justify-between pt-4 border-t border-border">
                 <span className="font-display text-2xl text-primary font-bold">{w.price}</span>
-                <Button size="sm" className="font-display uppercase">Купить</Button>
+                <Button size="sm" className="font-display uppercase" onClick={() => openOrder(w.title, w.price)}>Купить</Button>
               </div>
             </Card>
           ))}
@@ -158,7 +194,7 @@ function Index() {
                   ))}
                 </ul>
                 <div className="font-display text-3xl text-primary font-bold mb-4">{m.price}</div>
-                <Button className="w-full font-display uppercase tracking-wide" size="lg">Записаться</Button>
+                <Button className="w-full font-display uppercase tracking-wide" size="lg" onClick={() => openOrder(m.title, m.price)}>Записаться</Button>
               </Card>
             ))}
           </div>
@@ -234,12 +270,7 @@ function Index() {
             </div>
           </div>
           <Card className="p-7 bg-card border-border">
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <Input placeholder="Ваше имя" className="bg-background border-border" />
-              <Input type="email" placeholder="Email" className="bg-background border-border" />
-              <Textarea placeholder="Сообщение" rows={4} className="bg-background border-border" />
-              <Button type="submit" size="lg" className="w-full font-display uppercase tracking-wide">Отправить</Button>
-            </form>
+            <ContactForm onSent={() => toast({ title: 'Сообщение отправлено!', description: 'Я свяжусь с вами в ближайшее время.' })} onError={() => toast({ title: 'Не удалось отправить', variant: 'destructive' })} />
           </Card>
         </div>
       </section>
@@ -256,7 +287,67 @@ function Index() {
           </div>
         </div>
       </footer>
+
+      {/* ORDER DIALOG */}
+      <Dialog open={!!order} onOpenChange={(v) => !v && setOrder(null)}>
+        <DialogContent className="bg-card border-border">
+          <DialogHeader>
+            <DialogTitle className="font-display uppercase text-2xl">Оформление заказа</DialogTitle>
+            <DialogDescription>
+              {order && <span className="text-foreground">{order.product} — <span className="text-primary font-semibold">{order.price}</span></span>}
+            </DialogDescription>
+          </DialogHeader>
+          <form className="space-y-4 mt-2" onSubmit={submitOrder}>
+            <Input placeholder="Ваше имя" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="bg-background border-border" />
+            <Input placeholder="Телефон, email или Telegram" value={form.contact} onChange={(e) => setForm({ ...form, contact: e.target.value })} className="bg-background border-border" />
+            <Textarea placeholder="Комментарий (необязательно)" rows={3} value={form.comment} onChange={(e) => setForm({ ...form, comment: e.target.value })} className="bg-background border-border" />
+            <Button type="submit" size="lg" disabled={sending} className="w-full font-display uppercase tracking-wide">
+              {sending ? 'Отправка...' : 'Отправить заявку'}
+            </Button>
+            <p className="text-xs text-muted-foreground text-center">После заявки я свяжусь с вами для оплаты и доступа.</p>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
+  );
+}
+
+function ContactForm({ onSent, onError }: { onSent: () => void; onError: () => void }) {
+  const [form, setForm] = useState({ name: '', contact: '', comment: '' });
+  const [sending, setSending] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.contact.trim()) {
+      onError();
+      return;
+    }
+    setSending(true);
+    try {
+      const res = await fetch(ORDER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, product: 'Вопрос с сайта', price: '' }),
+      });
+      if (!res.ok) throw new Error();
+      setForm({ name: '', contact: '', comment: '' });
+      onSent();
+    } catch {
+      onError();
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <form className="space-y-4" onSubmit={submit}>
+      <Input placeholder="Ваше имя" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="bg-background border-border" />
+      <Input placeholder="Email или Telegram" value={form.contact} onChange={(e) => setForm({ ...form, contact: e.target.value })} className="bg-background border-border" />
+      <Textarea placeholder="Сообщение" rows={4} value={form.comment} onChange={(e) => setForm({ ...form, comment: e.target.value })} className="bg-background border-border" />
+      <Button type="submit" size="lg" disabled={sending} className="w-full font-display uppercase tracking-wide">
+        {sending ? 'Отправка...' : 'Отправить'}
+      </Button>
+    </form>
   );
 }
 

@@ -1,0 +1,28 @@
+{
+  "tests": [
+    {
+      "name": "OPTIONS CORS preflight",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Заявка без обязательных полей",
+      "method": "POST",
+      "path": "/",
+      "body": {"product": "Марафон"},
+      "expectedStatus": 400,
+      "expectedBody": {"error": "string"},
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Корректная заявка",
+      "method": "POST",
+      "path": "/",
+      "body": {"name": "Анна", "contact": "anna@mail.ru", "product": "Марафон «-5 кг за 21 день»", "price": "4 900 ₽"},
+      "expectedStatus": 200,
+      "expectedBody": {"success": true},
+      "bodyMatcher": "partial"
+    }
+  ]
+}
