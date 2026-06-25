@@ -268,7 +268,7 @@ function Index() {
                 ['Mail', 'yana-andrisovna@yandex.ru', 'mailto:yana-andrisovna@yandex.ru'],
                 ['Phone', '+7 (996) 348-30-27', 'tel:+79963483027'],
                 ['Send', '@YanaOtikova (Telegram)', 'https://t.me/YanaOtikova'],
-                ['Instagram', '@YanaOtikova (Instagram)', 'https://instagram.com/YanaOtikova'],
+                ['Instagram', '@Yana_workfit (Instagram)', 'https://instagram.com/Yana_workfit'],
               ].map(([icon, val, href]) => (
                 <a key={val} href={href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-primary transition-colors">
                   <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center"><Icon name={icon} size={20} /></div>
@@ -289,7 +289,7 @@ function Index() {
           <div className="font-display text-xl">FOR<span className="text-primary">MA</span></div>
           <p className="text-sm text-muted-foreground">© 2026 FORMA. Все права защищены.</p>
           <div className="flex gap-4 text-muted-foreground">
-            <a href="https://instagram.com/YanaOtikova" target="_blank" rel="noopener noreferrer" className="hover:text-primary"><Icon name="Instagram" size={20} /></a>
+            <a href="https://instagram.com/Yana_workfit" target="_blank" rel="noopener noreferrer" className="hover:text-primary"><Icon name="Instagram" size={20} /></a>
             <a href="https://t.me/YanaOtikova" target="_blank" rel="noopener noreferrer" className="hover:text-primary"><Icon name="Send" size={20} /></a>
           </div>
         </div>
