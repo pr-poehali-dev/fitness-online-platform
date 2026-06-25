@@ -266,7 +266,7 @@ function Index() {
             <div className="space-y-4">
               {[
                 ['Mail', 'yana-andrisovna@yandex.ru', 'mailto:yana-andrisovna@yandex.ru'],
-                ['Phone', '+7 (996) 348-30-27', 'tel:+79963483027'],
+                ['Phone', '+7 (996) 348-30-26', 'tel:+79963483026'],
                 ['Send', '@YanaOtikova (Telegram)', 'https://t.me/YanaOtikova'],
                 ['Instagram', '@Yana_workfit (Instagram)', 'https://instagram.com/Yana_workfit'],
               ].map(([icon, val, href]) => (
