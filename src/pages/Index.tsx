@@ -215,13 +215,16 @@ function Index() {
             <span className="text-primary text-sm uppercase tracking-widest">О тренере</span>
             <h2 className="font-display text-4xl md:text-5xl font-bold uppercase mt-2 mb-6">Привет, я <span className="text-primary">Яна</span></h2>
             <p className="text-muted-foreground mb-4">
-              Мне 40 лет, и спортом я занимаюсь с 3 лет. За эти годы я прошла путь от профессионального спорта до сертифицированного фитнес-наставника.
+              Мне 40 лет, спортом занимаюсь с 3 лет, а фитнес-тренером работаю уже более 10 лет. Я дипломированный специалист по прикладной нутрициологии — знаю, как работает тело изнутри.
+            </p>
+            <p className="text-muted-foreground mb-4">
+              Я обожаю свою работу и терпеть не могу рутину и скучные тренировки. Поэтому все мои занятия проходят в лёгкой танцевальной форме — без изнурительных диет и мучений.
             </p>
             <p className="text-muted-foreground mb-8">
-              Я знаю, как изменить тело в любом возрасте — без изнуряющих диет и травм. Мои онлайн-тренировки и марафоны помогли тысячам женщин обрести форму мечты.
+              После моих тренировок ты получаешь не только колоссальный заряд энергии, но и потрясающее настроение на весь день! 🔥
             </p>
             <div className="grid grid-cols-2 gap-5">
-              {[['Award', 'Сертифицированный тренер'], ['Users', '2 500+ учениц'], ['HeartPulse', 'Программы под любой возраст'], ['Video', 'Доступ навсегда']].map(([icon, text]) => (
+              {[['Award', '10+ лет тренерского опыта'], ['Salad', 'Нутрициолог по диплому'], ['HeartPulse', 'Танцевальный формат'], ['Smile', 'Заряд и настроение']].map(([icon, text]) => (
                 <div key={text} className="flex items-center gap-3">
                   <Icon name={icon} size={22} className="text-primary shrink-0" />
                   <span className="text-sm">{text}</span>
