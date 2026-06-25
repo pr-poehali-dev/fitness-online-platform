@@ -213,7 +213,7 @@ function Index() {
           </div>
           <div>
             <span className="text-primary text-sm uppercase tracking-widest">О тренере</span>
-            <h2 className="font-display text-4xl md:text-5xl font-bold uppercase mt-2 mb-6">Привет, я твой тренер</h2>
+            <h2 className="font-display text-4xl md:text-5xl font-bold uppercase mt-2 mb-6">Привет, я <span className="text-primary">Яна</span></h2>
             <p className="text-muted-foreground mb-4">
               Мне 40 лет, и спортом я занимаюсь с 3 лет. За эти годы я прошла путь от профессионального спорта до сертифицированного фитнес-наставника.
             </p>
