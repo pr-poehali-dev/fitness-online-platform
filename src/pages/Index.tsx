@@ -9,8 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 
 const ORDER_URL = 'https://functions.poehali.dev/28717117-c24e-43d4-98a3-1f5fd63dfa44';
 
-const HERO_IMG = 'https://cdn.poehali.dev/projects/a8ae6773-81f2-4c84-b16d-21ba235a7950/files/776fc0ab-d762-4719-ae50-67bcef584d0d.jpg';
-const WORKOUT_IMG = 'https://cdn.poehali.dev/projects/a8ae6773-81f2-4c84-b16d-21ba235a7950/files/4604e9cb-3e8c-45b3-ba17-42618dc30320.jpg';
+const HERO_IMG = 'https://cdn.poehali.dev/projects/a8ae6773-81f2-4c84-b16d-21ba235a7950/bucket/4489ea37-9c13-459d-aad2-3a4e658bc7c8.jpeg';
+const WORKOUT_IMG = 'https://cdn.poehali.dev/projects/a8ae6773-81f2-4c84-b16d-21ba235a7950/bucket/9716786a-accd-4571-b8fd-7ed202ff3c11.jpeg';
 
 const nav = [
   { label: 'Главная', href: '#hero' },
