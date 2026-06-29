@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useToast } from '@/hooks/use-toast';
 
 const ORDER_URL = 'https://functions.poehali.dev/28717117-c24e-43d4-98a3-1f5fd63dfa44';
+const UPLOAD_VIDEO_URL = 'https://functions.poehali.dev/92e87b94-a055-4a9c-9558-d27f184c19bb';
 
 const HERO_IMG = 'https://cdn.poehali.dev/projects/a8ae6773-81f2-4c84-b16d-21ba235a7950/bucket/4489ea37-9c13-459d-aad2-3a4e658bc7c8.jpeg';
 const WORKOUT_IMG = 'https://cdn.poehali.dev/projects/a8ae6773-81f2-4c84-b16d-21ba235a7950/bucket/9716786a-accd-4571-b8fd-7ed202ff3c11.jpeg';
@@ -48,6 +49,31 @@ function Index() {
   const [order, setOrder] = useState<{ product: string; price: string } | null>(null);
   const [form, setForm] = useState({ name: '', contact: '', comment: '' });
   const [sending, setSending] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [morningVideoUrl, setMorningVideoUrl] = useState<string | null>(null);
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const buffer = await file.arrayBuffer();
+      const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+      const res = await fetch(UPLOAD_VIDEO_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folder: 'utrennyaya-zaryadka', filename: file.name, file: base64 }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error();
+      setMorningVideoUrl(data.url);
+      toast({ title: 'Видео загружено!' });
+    } catch {
+      toast({ title: 'Ошибка загрузки', variant: 'destructive' });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const openOrder = (product: string, price: string) => {
     setForm({ name: '', contact: '', comment: '' });
@@ -153,23 +179,41 @@ function Index() {
           <p className="text-muted-foreground max-w-sm">Покупай отдельные программы и занимайся когда удобно — доступ навсегда.</p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {workouts.map((w) => (
-            <Card key={w.title} className="group p-6 bg-card border-border hover:border-primary/50 transition-all duration-300 hover-scale">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-primary-foreground transition-colors text-primary">
-                <Icon name={w.icon} size={24} />
-              </div>
-              <h3 className="font-display text-xl uppercase mb-2">{w.title}</h3>
-              <p className="text-sm text-muted-foreground mb-5">{w.desc}</p>
-              <div className="flex gap-4 text-xs text-muted-foreground mb-5">
-                <span className="flex items-center gap-1"><Icon name="Clock" size={14} /> {w.duration}</span>
-                <span className="flex items-center gap-1"><Icon name="TrendingUp" size={14} /> {w.level}</span>
-              </div>
-              <div className="flex items-center justify-between pt-4 border-t border-border">
-                <span className="font-display text-2xl text-primary font-bold">{w.price}</span>
-                <Button size="sm" className="font-display uppercase" onClick={() => openOrder(w.title, w.price)}>Купить</Button>
-              </div>
-            </Card>
-          ))}
+          {workouts.map((w) => {
+            const isMorning = w.title === 'Утренняя зарядка';
+            return (
+              <Card key={w.title} className="group p-6 bg-card border-border hover:border-primary/50 transition-all duration-300 hover-scale">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-primary-foreground transition-colors text-primary">
+                  <Icon name={w.icon} size={24} />
+                </div>
+                <h3 className="font-display text-xl uppercase mb-2">{w.title}</h3>
+                <p className="text-sm text-muted-foreground mb-5">{w.desc}</p>
+                <div className="flex gap-4 text-xs text-muted-foreground mb-5">
+                  <span className="flex items-center gap-1"><Icon name="Clock" size={14} /> {w.duration}</span>
+                  <span className="flex items-center gap-1"><Icon name="TrendingUp" size={14} /> {w.level}</span>
+                </div>
+                {isMorning && morningVideoUrl && (
+                  <div className="mb-4">
+                    <video src={morningVideoUrl} controls className="w-full rounded-lg max-h-40 object-cover" />
+                  </div>
+                )}
+                <div className="flex items-center justify-between pt-4 border-t border-border gap-2 flex-wrap">
+                  <span className="font-display text-2xl text-primary font-bold">{w.price}</span>
+                  <div className="flex gap-2 items-center">
+                    {isMorning && (
+                      <label className="cursor-pointer">
+                        <input type="file" accept="video/*" className="hidden" onChange={handleVideoUpload} disabled={uploading} />
+                        <Button size="sm" variant="outline" className="font-display uppercase" asChild>
+                          <span>{uploading ? <Icon name="Loader2" size={16} className="animate-spin" /> : <Icon name="Upload" size={16} />}</span>
+                        </Button>
+                      </label>
+                    )}
+                    <Button size="sm" className="font-display uppercase" onClick={() => openOrder(w.title, w.price)}>Купить</Button>
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
         </div>
       </section>
 
